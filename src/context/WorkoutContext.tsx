@@ -10,7 +10,7 @@ interface WorkoutContextType {
 
 export const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
-export const WorkoutProvider = ({ children }: { children: ReactNode }) {
+export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     const [workouts, steWorkouts] = useState<Workout[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
