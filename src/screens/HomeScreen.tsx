@@ -1,12 +1,18 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Button, Text, View } from 'react-native'
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
   return (
     <View>
       <Text>
-        HomeScreen
+        Home Screen
       </Text>
+      <Button 
+      title= "ajouter une séance"
+      onPress={() => navigation.navigate("AddWorkout")}
+      >
+        
+      </Button>
     </View>
   )
 }

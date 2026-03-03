@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { Workout } from "../types";
+import { loadWorkouts } from "../storage/workoutStorage";
 
 interface WorkoutContextType {
     workouts: Workout[];
@@ -11,7 +12,7 @@ interface WorkoutContextType {
 export const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
 export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
-    const [workouts, steWorkouts] = useState<Workout[]>([]);
+    const [workouts, setWorkouts] = useState<Workout[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +21,7 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             try {
                 const stored = await loadWorkouts();
-                steWorkouts(stored)
+                setWorkouts(stored)
             } catch (error) {
                 setError("impossible de chager les séances");
             } finally {
@@ -35,7 +36,7 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
             ...data,
             id: Date.now().toString(),
         };
-        steWorkouts((prev) => [newWorkout, ...prev]);
+        setWorkouts((prev) => [newWorkout, ...prev]);
     };
 
     return(

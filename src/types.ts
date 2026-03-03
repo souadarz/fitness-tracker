@@ -3,10 +3,16 @@ export type ActivityType = 'course' | 'musculation' | 'vélo' | 'autre';
 export type Intensity = 'faible' | 'moyenne' | 'élevée';
 
 export interface Workout {
-    id: string;
-    activity: ActivityType;
-    duration: number;
-    intensity: Intensity;
-    date: string;
-    notes?: string;
+  id: string;
+  activity: ActivityType;
+  duration: number;
+  intensity: Intensity;
+  date: string;
+  notes?: string;
 }
+
+export type RootStackParamList = {
+  Home: undefined;
+  AddWorkout: undefined;
+  WorkoutDetails: { workoutId: string };
+};
