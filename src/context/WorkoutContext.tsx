@@ -1,47 +1,56 @@
-import { ReactNode, createContext, useEffect, useState } from "react";
-import { Workout } from "../types";
-import { loadWorkouts } from "../storage/workoutStorage";
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import { Workout } from '../types';
+import { loadWorkouts, saveWorkouts } from '../storage/workoutStorage';
 
 interface WorkoutContextType {
     workouts: Workout[];
     isLoading: boolean;
-    error: string | null;
-    addWorkout: (data: Omit<Workout, 'id'>) => Promise<void>;
+    addWorkout: (workout: Omit<Workout, 'id'>) => Promise<void>;
+    deleteWorkout: (id: string) => Promise<void>;
 }
 
 export const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
-export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
+export const WorkoutProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const init = async () => {
-            setIsLoading(true);
+        const fetchWorkouts = async () => {
             try {
-                const stored = await loadWorkouts();
-                setWorkouts(stored)
+                const storedWorkouts = await loadWorkouts();
+                setWorkouts(storedWorkouts);
             } catch (error) {
-                setError("impossible de chager les séances");
+                console.error('Failed to load workouts on startup', error);
             } finally {
                 setIsLoading(false);
             }
         };
-        init();
+
+        fetchWorkouts();
     }, []);
 
-    const addWorkout = async (data: Omit<Workout, 'id'>) => {
+     const addWorkout = async (newWorkoutData: Omit<Workout, 'id'>) => {
         const newWorkout: Workout = {
-            ...data,
+            ...newWorkoutData,
             id: Date.now().toString(),
         };
-        setWorkouts((prev) => [newWorkout, ...prev]);
+        const updatedWorkouts = [newWorkout, ...workouts];
+
+        setWorkouts(updatedWorkouts);
+        await saveWorkouts(updatedWorkouts);
+    };
+
+    const deleteWorkout = async (id: string) => {
+        const updatedWorkouts = workouts.filter((workout) => workout.id !== id);
+
+        setWorkouts(updatedWorkouts);
+        await saveWorkouts(updatedWorkouts);
     };
 
     return(
         <WorkoutContext.Provider
-            value={{ workouts, isLoading, error, addWorkout}}
+            value={{ workouts, isLoading, addWorkout, deleteWorkout}}
         >
             {children}
         </WorkoutContext.Provider>

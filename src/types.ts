@@ -1,18 +1,9 @@
-export type ActivityType = 'course' | 'musculation' | 'vélo' | 'autre';
-
-export type Intensity = 'faible' | 'moyenne' | 'élevée';
 
 export interface Workout {
   id: string;
-  activity: ActivityType;
+  type: string;
   duration: number;
-  intensity: Intensity;
+  intensity: 'faible' | 'moyenne' | 'élevée';
   date: string;
   notes?: string;
 }
-
-export type RootStackParamList = {
-  Home: undefined;
-  AddWorkout: undefined;
-  WorkoutDetails: { workoutId: string };
-};
